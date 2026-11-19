@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+data/memories.json
+data/*cookies*.txt
+tiktok-cookies.txt
+yt-cookies-final.txt
+yt-cookies-youtube.txt
+yt-cookies.txt
+.wwebjs_auth/
+.wwebjs_cache/
+node_modules/
+bin/
+*cookies*.txt
