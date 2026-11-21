@@ -5,6 +5,7 @@ import QRCode from 'qrcode';
 import googleTTS from 'google-tts-api';
 import OpenAI from 'openai';
 import { createPhubImage, parsePhubText } from './phub-image.js';
+import { createTextSticker, TTP_HELP } from './text-sticker.js';
 import { imageExtensionForMime, isDirectImageUrl, normalizeDownloadUrl } from './download-utils.js';
 import mammoth from 'mammoth';
 import { PDFParse } from 'pdf-parse';
@@ -557,6 +558,7 @@ function menuText() {
     '',
     '*Media dan dokumen*',
     '/s atau /stiker - buat stiker dari gambar',
+    '/ttp <teks> - buat stiker tulisan',
     '/sgif - buat stiker animasi dari video',
     '/img - ubah stiker menjadi gambar',
     '/pdf - baca atau rangkum PDF/DOCX',
@@ -3841,6 +3843,7 @@ client.on('message', async (msg) => {
   const isTranslateCommand = /^\/translate(?:\s|$)/i.test(userMessage || '');
   const isQuoteCommand = /^\/quote(?:\s|$)/i.test(userMessage || '');
   const isPhubCommand = /^\/phub(?:\s|$)/i.test(userMessage || '');
+  const isTtpCommand = /^\/ttp(?:\s|$)/i.test(userMessage || '');
   const isQrCommand = /^\/qr(?:\s|$)/i.test(userMessage || '');
   const isStatsCommand = /^\/stats$/i.test(userMessage || '');
   const isTtsCommand = /^\/tts(?:\s|$)/i.test(userMessage || '');
@@ -3906,6 +3909,7 @@ client.on('message', async (msg) => {
     !isTranslateCommand &&
     !isQuoteCommand &&
     !isPhubCommand &&
+    !isTtpCommand &&
     !isQrCommand &&
     !isStatsCommand &&
     !isTtsCommand &&
@@ -3942,6 +3946,26 @@ client.on('message', async (msg) => {
 
   // Perintah khusus (hanya dari pesan teks)
   if (!fromVoice) {
+    if (isTtpCommand) {
+      const text = userMessage.replace(/^\/ttp\s*/i, '').trim();
+      if (!text) {
+        await sendReply(msg, TTP_HELP);
+        return;
+      }
+      try {
+        const buffer = createTextSticker(text);
+        await sendReply(msg, new MessageMedia('image/webp', buffer.toString('base64'), 'teks.webp'), {
+          sendMediaAsSticker: true,
+          stickerName: 'Aji BOT',
+          stickerAuthor: 'Barudak Darmaji',
+        });
+      } catch (error) {
+        console.error('TTP error:', error.message);
+        await sendReply(msg, `Stiker gagal dibuat atau dikirim: ${error.message}`);
+      }
+      logCommandResult('handled');
+      return;
+    }
     if (isPhubCommand) {
       await handlePhubCommand(msg, userMessage);
       logCommandResult('handled');

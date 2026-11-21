@@ -62,6 +62,8 @@ Scan QR di terminal melalui WhatsApp: **Pengaturan > Perangkat tertaut > Tautkan
 
 ## Perintah
 
+- `/ttp <teks>`: buat stiker tulisan putih dengan garis tepi hitam dan latar transparan, maksimal 200 karakter. Contoh: `/ttp besok libur!`. Bisa dipakai di chat pribadi dan grup.
+
 Ketik `/help` atau `/menu` di chat untuk melihat bantuan bot.
 
 ### Chat dan media
